@@ -53,7 +53,7 @@ pipeline {
                     def kubeConfig = readFile(KUBECONFIG)
                     // Update deployment-dev.yaml to use the new image tag
                     sh "sed -i 's|${DOCKER_IMAGE}:latest|${DOCKER_IMAGE}:${IMAGE_TAG}|' deployment-dev.yaml"
-                    sh "kubectl apply -f deployment-dev.yaml"
+                    sh "kubectl apply -f deployment-dev.yaml --kubeconfig=${KUBECONFIG}"
                 }
             }
         }
@@ -91,14 +91,14 @@ pipeline {
                     //sh "ls -la"
                     sh "sed -i 's|${DOCKER_IMAGE}:latest|${DOCKER_IMAGE}:${IMAGE_TAG}|' deployment-prod.yaml"
                     sh "cd .."
-                    sh "kubectl apply -f deployment-prod.yaml"
+                    sh "kubectl apply -f deployment-prod.yaml --kubeconfig=${KUBECONFIG}"
                 }
             }
         }
         stage('Check Kubernetes Cluster') {
             steps {
                 script {
-                    sh "kubectl get all"
+                    sh "kubectl get all --kubeconfig=${KUBECONFIG}"
                 }
             }
         }
